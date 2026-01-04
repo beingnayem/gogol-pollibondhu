@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="polli_green">#2E7D32</color> <!-- Approximate Green from UI -->
+    <color name="polli_green_light">#E8F5E9</color>
+    <color name="gray_text">#757575</color>
+    <color name="bg_gray">#F5F5F5</color>
+</resources>

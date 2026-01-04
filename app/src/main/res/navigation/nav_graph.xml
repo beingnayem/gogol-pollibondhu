@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.pollibondhu.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.pollibondhu.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/serviceFragment"
+        android:name="com.example.pollibondhu.ServiceFragment"
+        android:label="Service"
+        tools:layout="@layout/fragment_service" />
+
+    <fragment
+        android:id="@+id/agricultureFragment"
+        android:name="com.example.pollibondhu.KrishiFragment"
+        android:label="Krishi"
+        tools:layout="@layout/fragment_krishi" />
+
+    <fragment
+        android:id="@+id/citizenFragment"
+        android:name="com.example.pollibondhu.NagorikFragment"
+        android:label="Nagorik"
+        tools:layout="@layout/fragment_nagorik" />
+
+    <!-- Add other fragments similarly with IDs matching the menu -->
+</navigation>

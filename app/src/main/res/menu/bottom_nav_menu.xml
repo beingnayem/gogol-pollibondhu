@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="হোম" />
+
+    <!-- Placeholders for other items in UI -->
+    <item
+        android:id="@+id/serviceFragment"
+        android:icon="@drawable/ic_service"
+        android:title="সেবা" />
+
+    <item
+        android:id="@+id/agricultureFragment"
+        android:icon="@drawable/ic_krishi"
+        android:title="কৃষি" />
+
+    <item
+        android:id="@+id/citizenFragment"
+        android:icon="@drawable/ic_nagorik"
+        android:title="নাগরিক" />
+
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_person"
+        android:title="প্রোফাইল" />
+</menu>
