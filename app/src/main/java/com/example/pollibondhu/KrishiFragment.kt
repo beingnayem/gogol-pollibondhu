@@ -70,7 +70,7 @@ class KrishiFragment : Fragment() {
 
         setupFeaturedGrid(view.findViewById(R.id.gridFeatured))
 
-        // Updated function calls
+        // Updated function calls with full navigation logic
         setupListSection(view.findViewById(R.id.containerResources), getResourceData())
         setupListSection(view.findViewById(R.id.containerGov), getGovData())
     }
@@ -109,8 +109,6 @@ class KrishiFragment : Fragment() {
     private fun setupFeaturedGrid(gridLayout: GridLayout) {
         data class GridItem(val title: String, val bgColorHex: String, val iconTintHex: String, val iconRes: Int)
 
-        // Note: Ensure these drawables (ic_cropdoc, etc.) exist in your res/drawable folder
-        // If they don't exist yet, use generic icons like R.drawable.ic_service temporarily
         val items = listOf(
             GridItem("ক্রপ ডাক্তার", "#E8F5E9", "#4CAF50", R.drawable.ic_cropdoc),
             GridItem("বাজার দর", "#FFF3E0", "#FF9800", R.drawable.ic_bajardor),
@@ -132,13 +130,11 @@ class KrishiFragment : Fragment() {
             val iconView = cardView.findViewById<ImageView>(R.id.item_icon)
 
             titleView.text = item.title
-            // Set specific icon
             iconView.setImageResource(item.iconRes)
-            // Set colors
             iconBgCard.setCardBackgroundColor(Color.parseColor(item.bgColorHex))
             iconView.setColorFilter(Color.parseColor(item.iconTintHex))
 
-            // --- NAVIGATION CLICK LISTENER ADDED ---
+            // Navigation for Grid Items
             cardView.setOnClickListener {
                 when(item.title) {
                     "ক্রপ ডাক্তার" -> it.findNavController().navigate(R.id.cropDoctorFragment)
@@ -153,10 +149,10 @@ class KrishiFragment : Fragment() {
     }
 
 
-    // 1. New Data Class for List Items
+    // Data Class for List Items
     data class ListItem(val title: String, val iconRes: Int)
 
-    // 2. Updated function to accept ListItem
+    // Updated setupListSection with Navigation Logic for List Items
     private fun setupListSection(container: LinearLayout, items: List<ListItem>) {
 
         items.forEach { item ->
@@ -166,20 +162,40 @@ class KrishiFragment : Fragment() {
             val titleView = itemView.findViewById<TextView>(R.id.item_title)
 
             titleView.text = item.title
-
-            // Set Specific Icon
             iconView.setImageResource(item.iconRes)
-
-            // Optional: Apply a tint if you want uniform color (e.g., green)
             iconView.setColorFilter(Color.parseColor("#4CAF50"))
+
+            // --- CLICK LISTENER FOR LIST ITEMS ---
+            itemView.setOnClickListener {
+                val navController = it.findNavController()
+                val bundle = Bundle()
+
+                when (item.title) {
+                    // Category 1: Agri Info -> Goes to Generic Info Fragment
+                    "চাষাবাদ পদ্ধতি", "সার ও কীটনাশক তথ্য", "আধুনিক যন্ত্রপাতি", "প্রণোদনা কর্মসূচি" -> {
+                        bundle.putString("TITLE", item.title)
+                        navController.navigate(R.id.agriInfoDetailFragment, bundle)
+                    }
+
+                    // Category 2: Gov Services -> Goes to Apply Form
+                    "কৃষি ভর্তুকি আবেদন" -> {
+                        bundle.putString("SERVICE_NAME", item.title)
+                        navController.navigate(R.id.serviceApplyFragment, bundle)
+                    }
+
+                    // Category 3: Officer List
+                    "মাঠ পর্যায়ের কর্মকর্তা" -> {
+                        navController.navigate(R.id.fieldOfficerFragment)
+                    }
+                }
+            }
 
             container.addView(itemView)
         }
     }
 
-    // 3. Updated Data Sources with specific icons
     private fun getResourceData() = listOf(
-        ListItem("চাষাবাদ পদ্ধতি", R.drawable.ic_chash),       // Ensure these icons exist
+        ListItem("চাষাবাদ পদ্ধতি", R.drawable.ic_chash),
         ListItem("সার ও কীটনাশক তথ্য", R.drawable.ic_shar),
         ListItem("আধুনিক যন্ত্রপাতি", R.drawable.ic_jontro)
     )

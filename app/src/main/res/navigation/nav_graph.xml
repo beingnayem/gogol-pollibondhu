@@ -71,6 +71,18 @@
         android:label="Weather Detail"
         tools:layout="@layout/fragment_weather_detail" />
 
+    <fragment
+        android:id="@+id/agriInfoDetailFragment"
+        android:name="com.example.pollibondhu.AgriInfoDetailFragment"
+        android:label="Agri Info"
+        tools:layout="@layout/fragment_agri_info_detail" />
+
+    <fragment
+        android:id="@+id/fieldOfficerFragment"
+        android:name="com.example.pollibondhu.FieldOfficerFragment"
+        android:label="Field Officers"
+        tools:layout="@layout/fragment_field_officer" />
+
 
     <!-- Add other fragments similarly with IDs matching the menu -->
 </navigation>
