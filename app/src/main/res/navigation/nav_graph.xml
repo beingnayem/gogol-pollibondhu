@@ -35,5 +35,42 @@
         android:label="Nagorik"
         tools:layout="@layout/fragment_nagorik" />
 
+    <fragment
+        android:id="@+id/serviceDetailFragment"
+        android:name="com.example.pollibondhu.ServiceDetailFragment"
+        android:label="Service Detail"
+        tools:layout="@layout/fragment_service_detail" />
+
+    <fragment
+        android:id="@+id/serviceApplyFragment"
+        android:name="com.example.pollibondhu.ServiceApplyFragment"
+        android:label="Service Apply"
+        tools:layout="@layout/fragment_service_apply" />
+
+    <fragment
+        android:id="@+id/cropDoctorFragment"
+        android:name="com.example.pollibondhu.CropDoctorFragment"
+        android:label="Crop Doctor"
+        tools:layout="@layout/fragment_crop_doctor" />
+
+    <fragment
+        android:id="@+id/marketPriceFragment"
+        android:name="com.example.pollibondhu.MarketPriceFragment"
+        android:label="Market Price"
+        tools:layout="@layout/fragment_market_price" />
+
+    <fragment
+        android:id="@+id/agriLoanFragment"
+        android:name="com.example.pollibondhu.AgriLoanFragment"
+        android:label="Agri Loan"
+        tools:layout="@layout/fragment_agri_loan" />
+
+    <fragment
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.example.pollibondhu.WeatherDetailFragment"
+        android:label="Weather Detail"
+        tools:layout="@layout/fragment_weather_detail" />
+
+
     <!-- Add other fragments similarly with IDs matching the menu -->
 </navigation>

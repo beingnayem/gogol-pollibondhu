@@ -14,6 +14,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController // Import for navigation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,12 +70,11 @@ class KrishiFragment : Fragment() {
 
         setupFeaturedGrid(view.findViewById(R.id.gridFeatured))
 
-        // আপডেটেড ফাংশন কল করা হচ্ছে
+        // Updated function calls
         setupListSection(view.findViewById(R.id.containerResources), getResourceData())
         setupListSection(view.findViewById(R.id.containerGov), getGovData())
     }
 
-    // ... (fetchWeatherData এবং setupFeaturedGrid আগের মতোই থাকবে) ...
     private fun fetchWeatherData() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -109,6 +109,8 @@ class KrishiFragment : Fragment() {
     private fun setupFeaturedGrid(gridLayout: GridLayout) {
         data class GridItem(val title: String, val bgColorHex: String, val iconTintHex: String, val iconRes: Int)
 
+        // Note: Ensure these drawables (ic_cropdoc, etc.) exist in your res/drawable folder
+        // If they don't exist yet, use generic icons like R.drawable.ic_service temporarily
         val items = listOf(
             GridItem("ক্রপ ডাক্তার", "#E8F5E9", "#4CAF50", R.drawable.ic_cropdoc),
             GridItem("বাজার দর", "#FFF3E0", "#FF9800", R.drawable.ic_bajardor),
@@ -130,19 +132,31 @@ class KrishiFragment : Fragment() {
             val iconView = cardView.findViewById<ImageView>(R.id.item_icon)
 
             titleView.text = item.title
+            // Set specific icon
             iconView.setImageResource(item.iconRes)
+            // Set colors
             iconBgCard.setCardBackgroundColor(Color.parseColor(item.bgColorHex))
             iconView.setColorFilter(Color.parseColor(item.iconTintHex))
+
+            // --- NAVIGATION CLICK LISTENER ADDED ---
+            cardView.setOnClickListener {
+                when(item.title) {
+                    "ক্রপ ডাক্তার" -> it.findNavController().navigate(R.id.cropDoctorFragment)
+                    "বাজার দর" -> it.findNavController().navigate(R.id.marketPriceFragment)
+                    "আবহাওয়া বার্তা" -> it.findNavController().navigate(R.id.weatherDetailFragment)
+                    "কৃষি ঋণ" -> it.findNavController().navigate(R.id.agriLoanFragment)
+                }
+            }
 
             gridLayout.addView(cardView)
         }
     }
 
 
-    // ১. নতুন ডাটা ক্লাস তৈরি করুন (লিস্ট আইটেমের জন্য)
+    // 1. New Data Class for List Items
     data class ListItem(val title: String, val iconRes: Int)
 
-    // ২. setupListSection ফাংশন আপডেট করুন যেন এটি ListItem গ্রহণ করে
+    // 2. Updated function to accept ListItem
     private fun setupListSection(container: LinearLayout, items: List<ListItem>) {
 
         items.forEach { item ->
@@ -153,21 +167,21 @@ class KrishiFragment : Fragment() {
 
             titleView.text = item.title
 
-            // নির্দিষ্ট আইকন সেট করা হচ্ছে
+            // Set Specific Icon
             iconView.setImageResource(item.iconRes)
 
-            // চাইলে ডিফল্ট টিন্ট কালার ব্যবহার করতে পারেন অথবা রিমুভ করতে পারেন
+            // Optional: Apply a tint if you want uniform color (e.g., green)
             iconView.setColorFilter(Color.parseColor("#4CAF50"))
 
             container.addView(itemView)
         }
     }
 
-    // ৩. ডাটা সোর্স আপডেট করুন (টাইটেল এবং আইকন সহ)
+    // 3. Updated Data Sources with specific icons
     private fun getResourceData() = listOf(
-        ListItem("চাষাবাদ পদ্ধতি", R.drawable.ic_chash),       // উদাহরণ আইকন
-        ListItem("সার ও কীটনাশক তথ্য", R.drawable.ic_shar),      // উদাহরণ আইকন
-        ListItem("আধুনিক যন্ত্রপাতি", R.drawable.ic_jontro) // উদাহরণ আইকন
+        ListItem("চাষাবাদ পদ্ধতি", R.drawable.ic_chash),       // Ensure these icons exist
+        ListItem("সার ও কীটনাশক তথ্য", R.drawable.ic_shar),
+        ListItem("আধুনিক যন্ত্রপাতি", R.drawable.ic_jontro)
     )
 
     private fun getGovData() = listOf(
