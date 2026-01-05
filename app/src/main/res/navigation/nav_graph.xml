@@ -83,6 +83,48 @@
         android:label="Field Officers"
         tools:layout="@layout/fragment_field_officer" />
 
+    <fragment
+        android:id="@+id/complaintFragment"
+        android:name="com.example.pollibondhu.ComplaintFragment"
+        android:label="Complaint Box"
+        tools:layout="@layout/fragment_complaint" />
+
+    <fragment
+        android:id="@+id/nagorikListFragment"
+        android:name="com.example.pollibondhu.NagorikListFragment"
+        android:label="Nagorik Service List"
+        tools:layout="@layout/fragment_nagorik_list" />
+
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.example.pollibondhu.WebViewFragment"
+        android:label="Web Browser"
+        tools:layout="@layout/fragment_web_view" />
+
+    <fragment
+        android:id="@+id/citizenInfoFragment"
+        android:name="com.example.pollibondhu.CitizenInfoFragment"
+        android:label="Citizen Info"
+        tools:layout="@layout/fragment_agri_info_detail" />
+
+    <fragment
+        android:id="@+id/billPaymentFragment"
+        android:name="com.example.pollibondhu.BillPaymentFragment"
+        android:label="Pay Bill"
+        tools:layout="@layout/fragment_bill_payment" />
+
+    <fragment
+        android:id="@+id/transportScheduleFragment"
+        android:name="com.example.pollibondhu.TransportScheduleFragment"
+        android:label="Transport Schedule"
+        tools:layout="@layout/fragment_transport_schedule" />
+
+    <fragment
+        android:id="@+id/contentReadFragment"
+        android:name="com.example.pollibondhu.ContentReadFragment"
+        android:label="Read Content"
+        tools:layout="@layout/fragment_content_read" />
+
 
     <!-- Add other fragments similarly with IDs matching the menu -->
 </navigation>

@@ -1,6 +1,8 @@
 package com.example.pollibondhu
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.navigation.findNavController // Required for navigation
 
 class NagorikFragment : Fragment() {
 
@@ -36,17 +39,16 @@ class NagorikFragment : Fragment() {
 
     // --- Helper Functions ---
 
-    // 1. EMERGENCY SECTION
+    // 1. EMERGENCY SECTION (Click to Call)
     private fun setupEmergencyList(container: LinearLayout) {
-        // Data class for Emergency items
-        data class EmergencyItem(val title: String, val iconRes: Int)
+        data class EmergencyItem(val title: String, val number: String, val iconRes: Int)
 
-        // TODO: Replace with your specific icons (e.g., ic_police, ic_ambulance)
+        // Using placeholders for icons if custom ones aren't available yet
         val emergencyItems = listOf(
-            EmergencyItem("পুলিশ", android.R.drawable.ic_menu_view),       // Replace with R.drawable.ic_police
-            EmergencyItem("ফায়ার সার্ভিস", android.R.drawable.ic_menu_report_image), // Replace with R.drawable.ic_fire
-            EmergencyItem("অ্যাম্বুলেন্স", android.R.drawable.ic_menu_add),     // Replace with R.drawable.ic_ambulance
-            EmergencyItem("হটলাইন ৯৯৯", android.R.drawable.ic_menu_call)      // Replace with R.drawable.ic_hotline
+            EmergencyItem("পুলিশ", "999", android.R.drawable.ic_menu_view),
+            EmergencyItem("ফায়ার সার্ভিস", "16163", android.R.drawable.ic_menu_report_image),
+            EmergencyItem("অ্যাম্বুলেন্স", "999", android.R.drawable.ic_menu_add),
+            EmergencyItem("হটলাইন ৯৯৯", "999", android.R.drawable.ic_menu_call)
         )
 
         emergencyItems.forEach { item ->
@@ -55,28 +57,29 @@ class NagorikFragment : Fragment() {
             val iconView = itemView.findViewById<ImageView>(R.id.item_icon)
 
             titleView.text = item.title
-            // Set unique icon
             iconView.setImageResource(item.iconRes)
 
-            // Note: Tint is set to red in XML layout (item_emergency_card.xml).
-            // If you want original icon colors, remove 'app:tint' from the XML.
+            // --- CLICK LISTENER: MAKE CALL ---
+            itemView.setOnClickListener {
+                val intent = Intent(Intent.ACTION_DIAL)
+                intent.data = Uri.parse("tel:${item.number}")
+                startActivity(intent)
+            }
 
             container.addView(itemView)
         }
     }
 
-    // 2. GRID SECTION
+    // 2. GRID SECTION (Navigation)
     private fun setupNagorikGrid(gridLayout: GridLayout) {
 
-        // Data class updated to include 'iconRes'
         data class GridItem(val title: String, val bgColorHex: String, val iconTintHex: String, val iconRes: Int)
 
-        // TODO: Replace these with your actual icons
         val items = listOf(
-            GridItem("পরিবহন তথ্য", "#E3F2FD", "#2196F3", R.drawable.ic_poribohon), // Blue
-            GridItem("বিল পরিশোধ", "#E8F5E9", "#4CAF50", R.drawable.ic_bill),    // Green (Using existing)
-            GridItem("নাগরিক অভিযোগ", "#FFF3E0", "#FF9800", R.drawable.ic_obijog),    // Orange
-            GridItem("জন্ম নিবন্ধন", "#F3E5F5", "#9C27B0", R.drawable.ic_bc)         // Purple (Using existing)
+            GridItem("পরিবহন তথ্য", "#E3F2FD", "#2196F3", R.drawable.ic_poribohon),
+            GridItem("বিল পরিশোধ", "#E8F5E9", "#4CAF50", R.drawable.ic_bill),
+            GridItem("নাগরিক অভিযোগ", "#FFF3E0", "#FF9800", R.drawable.ic_obijog),
+            GridItem("জন্ম নিবন্ধন", "#F3E5F5", "#9C27B0", R.drawable.ic_bc)
         )
 
         items.forEach { item ->
@@ -94,21 +97,47 @@ class NagorikFragment : Fragment() {
             val iconView = cardView.findViewById<ImageView>(R.id.item_icon)
 
             titleView.text = item.title
-
-            // Set unique icon
             iconView.setImageResource(item.iconRes)
 
             // Apply dynamic colors
             iconBgCard.setCardBackgroundColor(Color.parseColor(item.bgColorHex))
             iconView.setColorFilter(Color.parseColor(item.iconTintHex))
 
+            // --- CLICK LISTENER: NAVIGATE ---
+            cardView.setOnClickListener {
+                val navController = it.findNavController()
+                val bundle = Bundle()
+
+                when (item.title) {
+                    "পরিবহন তথ্য" -> {
+                        // Goes to the generic list, showing transport options
+                        bundle.putString("TYPE", "Transport")
+                        navController.navigate(R.id.nagorikListFragment, bundle)
+                    }
+                    "বিল পরিশোধ" -> {
+                        // Goes to the generic list, showing bill options
+                        bundle.putString("TYPE", "Bills")
+                        navController.navigate(R.id.nagorikListFragment, bundle)
+                    }
+                    "নাগরিক অভিযোগ" -> {
+                        // Goes directly to the complaint form
+                        navController.navigate(R.id.complaintFragment)
+                    }
+                    "জন্ম নিবন্ধন" -> {
+                        // Opens the browser for birth registration
+                        bundle.putString("URL", "https://bdris.gov.bd")
+                        bundle.putString("TITLE", "জন্ম নিবন্ধন")
+                        navController.navigate(R.id.webViewFragment, bundle)
+                    }
+                }
+            }
+
             gridLayout.addView(cardView)
         }
     }
 
-    // 3. INFO LIST SECTION
+    // 3. INFO LIST SECTION (Navigation)
     private fun setupInfoList(container: LinearLayout) {
-        // Data class for Info items
         data class InfoItem(val title: String, val iconRes: Int)
 
         val infoItems = listOf(
@@ -125,12 +154,15 @@ class NagorikFragment : Fragment() {
             val titleView = itemView.findViewById<TextView>(R.id.item_title)
 
             titleView.text = item.title
-
-            // Set unique icon
             iconView.setImageResource(item.iconRes)
-
-            // Set tint to a neutral gray/blue for this list
             iconView.setColorFilter(Color.parseColor("#5C6BC0"))
+
+            // --- CLICK LISTENER: NAVIGATE TO DETAILS ---
+            itemView.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("TITLE", item.title)
+                it.findNavController().navigate(R.id.citizenInfoFragment, bundle)
+            }
 
             container.addView(itemView)
         }

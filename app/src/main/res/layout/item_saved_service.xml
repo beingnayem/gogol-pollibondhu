@@ -27,7 +27,7 @@
                 android:id="@+id/tvServiceTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="জাতীয় পরিচয়পত্র"
+                android:text="Title"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
@@ -36,19 +36,21 @@
                 android:id="@+id/tvServiceSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="পরিচয়পত্র সেবা"
+                android:text="Subtitle"
                 android:textColor="@color/gray_text"
                 android:textSize="12sp"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
 
         <TextView
+            android:id="@+id/btnOpen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="খুলুন"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="14sp"/>
+            android:textColor="@color/polli_green"
+            android:textSize="14sp"
+            android:padding="8dp"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
