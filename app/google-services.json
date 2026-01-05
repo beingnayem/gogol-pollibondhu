@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "664182788188",
+    "project_id": "pollibondhu-2207a",
+    "storage_bucket": "pollibondhu-2207a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664182788188:android:1c2f9dac42e077499c1699",
+        "android_client_info": {
+          "package_name": "com.example.pollibondhu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXiRFv8yyZRNggVVK1MgDTKFpMmE2TcTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,21 +2,24 @@ package com.example.pollibondhu
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.google.android.material.button.MaterialButton
+// THESE IMPORTS FIX YOUR ERROR:
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class ProfileFragment : Fragment() {
 
@@ -39,23 +42,39 @@ class ProfileFragment : Fragment() {
         tvUserName = view.findViewById(R.id.tvUserName)
         tvUserRole = view.findViewById(R.id.tvUserRole)
 
-        // Load saved name/role if exists
-        tvUserName.text = prefs.getString("NAME", "মোহাম্মদ করিম উদ্দিন")
-        tvUserRole.text = prefs.getString("ROLE", "কৃষক")
+        // --- 1. FIREBASE DATA FETCH ---
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            val uid = currentUser.uid
+            val ref = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
-        // 1. Setup Edit Profile
+            ref.get().addOnSuccessListener { snapshot ->
+                if (snapshot.exists()) {
+                    val name = snapshot.child("name").value.toString()
+                    val role = snapshot.child("role").value.toString()
+
+                    tvUserName.text = name
+                    tvUserRole.text = role
+
+                    prefs.edit().putString("NAME", name).putString("ROLE", role).apply()
+                }
+            }.addOnFailureListener {
+                // Fallback to offline data
+                tvUserName.text = prefs.getString("NAME", "ব্যবহারকারী")
+                tvUserRole.text = prefs.getString("ROLE", "সদস্য")
+            }
+        } else {
+            tvUserName.text = prefs.getString("NAME", "ব্যবহারকারী")
+            tvUserRole.text = prefs.getString("ROLE", "সদস্য")
+        }
+
+        // 2. Setup Features
         setupEditProfile(view)
-
-        // 2. Setup Saved Services List (The "Khulun" section)
         setupSavedServices(view.findViewById(R.id.containerSavedServices))
-
-        // 3. Setup Stats (Mock Data)
         setupStats(view)
-
-        // 4. Setup Settings (Switches)
         setupSettings(view)
 
-        // 5. Setup Logout
+        // 3. Setup Logout
         setupLogout(view)
     }
 
@@ -77,12 +96,18 @@ class ProfileFragment : Fragment() {
                     val newName = etName.text.toString()
                     val newRole = etRole.text.toString()
 
-                    // Update UI
                     tvUserName.text = newName
                     tvUserRole.text = newRole
 
-                    // Save to Storage
                     prefs.edit().putString("NAME", newName).putString("ROLE", newRole).apply()
+
+                    // Update Firebase
+                    val uid = FirebaseAuth.getInstance().currentUser?.uid
+                    if (uid != null) {
+                        val updates = mapOf<String, Any>("name" to newName, "role" to newRole)
+                        FirebaseDatabase.getInstance().getReference("users").child(uid).updateChildren(updates)
+                    }
+
                     Toast.makeText(context, "প্রোফাইল আপডেট করা হয়েছে", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("বাতিল", null)
@@ -91,24 +116,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupSavedServices(container: LinearLayout) {
-        // Data: Title, Subtitle, and Destination ID
         data class SavedItem(val title: String, val subtitle: String, val type: String)
 
         val savedItems = listOf(
-            SavedItem("জাতীয় পরিচয়পত্র", "পরিচয়পত্র সেবা", "NID"),
+            SavedItem("জাতীয় পরিচয়পত্র", "পরিচয়পত্র সেবা", "NID"),
             SavedItem("কৃষি ভর্তুকি", "ভর্তুকি ও সহায়তা", "SUBSIDY"),
             SavedItem("বিশেষজ্ঞ পরামর্শ", "কৃষি সহায়তা", "EXPERT")
         )
 
-        container.removeAllViews() // Clear existing demo items
+        container.removeAllViews()
 
         savedItems.forEach { item ->
             val itemView = layoutInflater.inflate(R.layout.item_saved_service, container, false)
-
             itemView.findViewById<TextView>(R.id.tvServiceTitle).text = item.title
             itemView.findViewById<TextView>(R.id.tvServiceSubtitle).text = item.subtitle
 
-            // Handle "Open" (Khulun) Click
             itemView.setOnClickListener {
                 val navController = it.findNavController()
                 val bundle = Bundle()
@@ -135,11 +157,9 @@ class ProfileFragment : Fragment() {
         val switchNotif = view.findViewById<SwitchCompat>(R.id.switchNotif)
         val switchLang = view.findViewById<SwitchCompat>(R.id.switchLanguage)
 
-        // Load State
         switchNotif.isChecked = prefs.getBoolean("NOTIF", true)
         switchLang.isChecked = prefs.getBoolean("LANG_BN", true)
 
-        // Save State on Change
         switchNotif.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("NOTIF", isChecked).apply()
             val msg = if(isChecked) "নোটিফিকেশন চালু হয়েছে" else "নোটিফিকেশন বন্ধ হয়েছে"
@@ -154,7 +174,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupStats(view: View) {
-        // Just setting static text as placeholder for database data
         val statServices = view.findViewById<View>(R.id.statServices)
         val statVotes = view.findViewById<View>(R.id.statVotes)
         val statPosts = view.findViewById<View>(R.id.statPosts)
@@ -173,11 +192,17 @@ class ProfileFragment : Fragment() {
         view.findViewById<MaterialButton>(R.id.btnLogout).setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("লগ আউট")
-                .setMessage("আপনি কি নিশ্চিত যে আপনি লগ আউট করতে চান?")
+                .setMessage("আপনি কি নিশ্চিত?")
                 .setPositiveButton("হ্যাঁ") { _, _ ->
-                    // Here you would clear session data
+                    // 1. Sign out from Firebase
+                    FirebaseAuth.getInstance().signOut()
+
+                    // 2. Navigate to LoginActivity and clear back stack
+                    val intent = Intent(requireActivity(), LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+
                     Toast.makeText(context, "লগ আউট সফল হয়েছে", Toast.LENGTH_SHORT).show()
-                    // In a real app: findNavController().navigate(R.id.loginFragment)
                 }
                 .setNegativeButton("না", null)
                 .show()
