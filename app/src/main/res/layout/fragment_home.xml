@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="পল্লীবন্ধু"
-            android:textColor="@color/polli_green"
+            android:textColor="#4CAF50"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
@@ -44,15 +44,38 @@
             app:layout_constraintEnd_toStartOf="@id/ivNotif"
             app:layout_constraintTop_toTopOf="@id/ivNotif" />
 
-        <ImageView
-            android:id="@+id/ivLocation"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_location_on"
-            android:layout_marginEnd="16dp"
-            app:tint="@color/gray_text"
+        <LinearLayout
+            android:id="@+id/layoutLocationInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="12dp"
+            android:background="?attr/selectableItemBackground"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toStartOf="@id/ivLanguage"
-            app:layout_constraintTop_toTopOf="@id/ivNotif" />
+            app:layout_constraintTop_toTopOf="@id/ivNotif"
+            app:layout_constraintBottom_toBottomOf="@id/ivNotif">
+
+            <TextView
+                android:id="@+id/tvLocationName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ঢাকা"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#333"
+                android:layout_marginEnd="4dp"/>
+
+            <ImageView
+                android:id="@+id/ivLocation"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_location_on"
+                app:tint="#4CAF50"/>
+        </LinearLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardHero"
@@ -94,7 +117,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="গ্রামীণ সম্প্রদায়ের জন্য ডিজিটাল সেবা, কৃষি সহায়তা এবং নাগরিক অংশগ্রহণের প্ল্যাটফর্ম"
+                    android:text="গ্রামীণ সম্প্রদায়ের জন্য ডিজিটাল সেবা, কৃষি সহায়তা এবং নাগরিক অংশগ্রহণের প্ল্যাটফর্ম"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:gravity="center"
@@ -121,7 +144,7 @@
             android:layout_height="wrap_content"
             android:text="আপনার প্রয়োজনীয় সেবা নির্বাচন করুন"
             android:textSize="14sp"
-            android:textColor="@color/gray_text"
+            android:textColor="#757575"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             app:layout_constraintStart_toStartOf="parent"

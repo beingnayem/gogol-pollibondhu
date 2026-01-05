@@ -1,132 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+    android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingBottom="80dp">
 
-        <TextView
-            android:id="@+id/tvLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="পল্লীবন্ধু"
-            android:textColor="@color/polli_green"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/ivNotif"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_notifications"
-            android:layout_marginEnd="16dp"
-            app:tint="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvLogo"
-            app:layout_constraintBottom_toBottomOf="@id/tvLogo" />
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bannerLayout"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_nagorik_banner"
-            android:padding="20dp"
-            app:layout_constraintTop_toBottomOf="@id/tvLogo">
+            android:layout_height="180dp"
+            android:background="@drawable/bg_profile_header"> <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
-                android:id="@+id/tvBannerTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="নাগরিক সেবা ও তথ্য"
                 android:textColor="@color/white"
                 android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:textStyle="bold" />
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="আপনার অধিকার, দায়িত্ব এবং প্রয়োজনীয় সকল নাগরিক সুবিধা এক জায়গায়।"
-                android:textColor="#E0E0E0"
-                android:textSize="14sp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ivBannerIllus"
-                app:layout_constraintTop_toBottomOf="@id/tvBannerTitle"/>
-
-            <ImageView
-                android:id="@+id/ivBannerIllus"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_nagoriksheba"
-                app:tint="#80FFFFFF"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:text="আপনার অধিকার, দায়িত্ব এবং প্রয়োজনীয় সকল\nনাগরিক সুবিধা এক জায়গায়।"
+                android:textColor="#E0E0E0"
+                android:textSize="14sp" />
+        </LinearLayout>
+        </FrameLayout>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/searchBarCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="-24dp"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:layout_constraintTop_toBottomOf="@id/bannerLayout">
-            <LinearLayout
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@color/white">
+
+            <EditText
+                android:id="@+id/etSearch"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_height="50dp"
+                android:background="@android:color/transparent"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="12dp"
+                android:hint="সেবা বা তথ্য খুঁজুন..."
+                android:inputType="text"
+                android:maxLines="1"
                 android:padding="12dp"
-                android:gravity="center_vertical">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_search"
-                    app:tint="@color/gray_text"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="সেবা বা তথ্য খুঁজুন..."
-                    android:textColor="@color/gray_text"
-                    android:layout_marginStart="12dp"/>
-            </LinearLayout>
+                android:textSize="14sp" />
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/tvEmergencyTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="জরুরি সেবা"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/searchBarCard"/>
+            android:layout_marginBottom="8dp"
+            android:text="জরুরি সেবা"
+            android:textColor="#333"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <HorizontalScrollView
-            android:id="@+id/scrollEmergency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:paddingStart="16dp"
-            android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@id/tvEmergencyTitle">
+            android:scrollbars="none"
+            android:paddingStart="8dp"
+            android:clipToPadding="false">
+
             <LinearLayout
                 android:id="@+id/containerEmergency"
                 android:layout_width="wrap_content"
@@ -134,50 +88,39 @@
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
+
         <TextView
-            android:id="@+id/tvGridTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:text="নাগরিক সুবিধাসমূহ"
+            android:textColor="#333"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scrollEmergency"/>
+            android:textStyle="bold" />
 
         <GridLayout
             android:id="@+id/gridNagorik"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="12dp"
             android:columnCount="2"
-            android:alignmentMode="alignMargins"
-            app:layout_constraintTop_toBottomOf="@id/tvGridTitle"/>
+            android:alignmentMode="alignMargins"/>
 
         <TextView
-            android:id="@+id/tvInfoTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="16dp"
             android:text="তথ্য ও নির্দেশিকা"
+            android:textColor="#333"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/gridNagorik"/>
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/containerInfoList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="12dp"
-            app:layout_constraintTop_toBottomOf="@id/tvInfoTitle"/>
+            android:paddingHorizontal="16dp"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
