@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -17,9 +17,11 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.google.android.material.button.MaterialButton
-// THESE IMPORTS FIX YOUR ERROR:
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ProfileFragment : Fragment() {
 
@@ -37,49 +39,64 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 1. Initialize Shared Preferences (Local Storage)
         prefs = requireActivity().getSharedPreferences("UserProfile", Context.MODE_PRIVATE)
 
         tvUserName = view.findViewById(R.id.tvUserName)
         tvUserRole = view.findViewById(R.id.tvUserRole)
 
-        // --- 1. FIREBASE DATA FETCH ---
+        // --- CRITICAL FIX: LOAD CACHED DATA IMMEDIATELY ---
+        // This ensures the user sees their name INSTANTLY when opening the app
+        val savedName = prefs.getString("NAME", "ব্যবহারকারী")
+        val savedRole = prefs.getString("ROLE", "সদস্য")
+
+        tvUserName.text = savedName
+        tvUserRole.text = savedRole
+
+        // 2. Fetch Fresh Data from Internet (Background Update)
+        fetchUserData()
+
+        // 3. Setup Features
+        setupEditProfile(view)
+        setupSavedServices(view.findViewById(R.id.containerSavedServices))
+        setupStats(view)
+        setupSettings(view)
+        setupLogout(view)
+    }
+
+    private fun fetchUserData() {
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) {
             val uid = currentUser.uid
             val ref = FirebaseDatabase.getInstance().getReference("users").child(uid)
 
-            ref.get().addOnSuccessListener { snapshot ->
-                if (snapshot.exists()) {
-                    val name = snapshot.child("name").value.toString()
-                    val role = snapshot.child("role").value.toString()
+            // Keep UI in sync with Database
+            ref.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // Get data from Firebase
+                        val name = snapshot.child("name").getValue(String::class.java) ?: "ব্যবহারকারী"
+                        val role = snapshot.child("role").getValue(String::class.java) ?: "সদস্য"
 
-                    tvUserName.text = name
-                    tvUserRole.text = role
+                        // Update UI with fresh data
+                        tvUserName.text = name
+                        tvUserRole.text = role
 
-                    prefs.edit().putString("NAME", name).putString("ROLE", role).apply()
+                        // Save to local storage (Update the cache)
+                        prefs.edit().putString("NAME", name).putString("ROLE", role).apply()
+                    }
                 }
-            }.addOnFailureListener {
-                // Fallback to offline data
-                tvUserName.text = prefs.getString("NAME", "ব্যবহারকারী")
-                tvUserRole.text = prefs.getString("ROLE", "সদস্য")
-            }
-        } else {
-            tvUserName.text = prefs.getString("NAME", "ব্যবহারকারী")
-            tvUserRole.text = prefs.getString("ROLE", "সদস্য")
+
+                override fun onCancelled(error: DatabaseError) {
+                    // If internet fails, do nothing (User already sees cached data)
+                    // Optional: Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
+                }
+            })
         }
-
-        // 2. Setup Features
-        setupEditProfile(view)
-        setupSavedServices(view.findViewById(R.id.containerSavedServices))
-        setupStats(view)
-        setupSettings(view)
-
-        // 3. Setup Logout
-        setupLogout(view)
     }
 
     private fun setupEditProfile(view: View) {
-        val btnEdit = view.findViewById<ImageButton>(R.id.btnEditProfile)
+        val btnEdit = view.findViewById<ImageView>(R.id.btnEditProfile)
 
         btnEdit.setOnClickListener {
             val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_profile, null)
@@ -96,9 +113,11 @@ class ProfileFragment : Fragment() {
                     val newName = etName.text.toString()
                     val newRole = etRole.text.toString()
 
+                    // Update UI immediately
                     tvUserName.text = newName
                     tvUserRole.text = newRole
 
+                    // Save to Cache immediately
                     prefs.edit().putString("NAME", newName).putString("ROLE", newRole).apply()
 
                     // Update Firebase
@@ -108,7 +127,7 @@ class ProfileFragment : Fragment() {
                         FirebaseDatabase.getInstance().getReference("users").child(uid).updateChildren(updates)
                     }
 
-                    Toast.makeText(context, "প্রোফাইল আপডেট করা হয়েছে", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "আপডেট সম্পন্ন হয়েছে", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("বাতিল", null)
                 .show()
@@ -162,14 +181,10 @@ class ProfileFragment : Fragment() {
 
         switchNotif.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("NOTIF", isChecked).apply()
-            val msg = if(isChecked) "নোটিফিকেশন চালু হয়েছে" else "নোটিফিকেশন বন্ধ হয়েছে"
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
 
         switchLang.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("LANG_BN", isChecked).apply()
-            val lang = if(isChecked) "বাংলা" else "English"
-            Toast.makeText(context, "ভাষা পরিবর্তন: $lang", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -178,14 +193,14 @@ class ProfileFragment : Fragment() {
         val statVotes = view.findViewById<View>(R.id.statVotes)
         val statPosts = view.findViewById<View>(R.id.statPosts)
 
-        fun setStat(view: View, valText: String, labelText: String) {
-            view.findViewById<TextView>(R.id.tvStatValue).text = valText
-            view.findViewById<TextView>(R.id.tvStatLabel).text = labelText
+        fun setStat(layout: View, valText: String, labelText: String) {
+            layout.findViewById<TextView>(R.id.tvStatValue).text = valText
+            layout.findViewById<TextView>(R.id.tvStatLabel).text = labelText
         }
 
-        setStat(statServices, "১২", "সেবা গ্রহণ")
-        setStat(statVotes, "০৫", "ভোট প্রদান")
-        setStat(statPosts, "০৩", "ফোরাম পোস্ট")
+        setStat(statServices, "১২", "সেবা")
+        setStat(statVotes, "০৫", "ভোট")
+        setStat(statPosts, "০৩", "পোস্ট")
     }
 
     private fun setupLogout(view: View) {
@@ -194,15 +209,13 @@ class ProfileFragment : Fragment() {
                 .setTitle("লগ আউট")
                 .setMessage("আপনি কি নিশ্চিত?")
                 .setPositiveButton("হ্যাঁ") { _, _ ->
-                    // 1. Sign out from Firebase
-                    FirebaseAuth.getInstance().signOut()
+                    // Clear Cache on Logout
+                    prefs.edit().clear().apply()
 
-                    // 2. Navigate to LoginActivity and clear back stack
+                    FirebaseAuth.getInstance().signOut()
                     val intent = Intent(requireActivity(), LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-
-                    Toast.makeText(context, "লগ আউট সফল হয়েছে", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("না", null)
                 .show()

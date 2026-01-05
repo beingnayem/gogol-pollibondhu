@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.navigation.fragment.findNavController // Import this
+import androidx.navigation.fragment.findNavController
 
 class ServiceFragment : Fragment() {
 
@@ -24,6 +24,7 @@ class ServiceFragment : Fragment() {
 
         val container = view.findViewById<LinearLayout>(R.id.layoutCategoryContainer)
 
+        // Make sure you created the drawable files I listed above!
         val categories = listOf(
             Category("পরিচয়পত্র সেবা", R.drawable.ic_identity),
             Category("সার্টিফিকেট সেবা", R.drawable.ic_certificate),
@@ -39,15 +40,13 @@ class ServiceFragment : Fragment() {
 
             titleView.text = category.title
 
-            // Uncomment if you have the icons ready, otherwise use default
-            // iconView.setImageResource(category.iconRes)
+            // --- FIX: This line was commented out. I have enabled it. ---
+            iconView.setImageResource(category.iconRes)
 
             // --- CLICK LISTENER ---
             itemView.setOnClickListener {
-                // Pass the title to the next fragment
                 val bundle = Bundle()
                 bundle.putString("CATEGORY_TITLE", category.title)
-
                 findNavController().navigate(R.id.serviceDetailFragment, bundle)
             }
 
